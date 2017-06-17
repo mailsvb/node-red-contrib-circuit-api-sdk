@@ -28,6 +28,18 @@
         <input type="text" id="node-config-input-lastname">
     </div>
     <div class="form-row">
+        <label><input type="checkbox" id="node-config-input-allowLongitude" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Longitude</label>
+        <input type="text" id="node-config-input-longitude">
+    </div>
+    <div class="form-row">
+        <label><input type="checkbox" id="node-config-input-allowLatitude" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Latitude</label>
+        <input type="text" id="node-config-input-latitude">
+    </div>
+    <div class="form-row">
+        <label><input type="checkbox" id="node-config-input-allowLocation" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Location</label>
+        <input type="text" id="node-config-input-location">
+    </div>
+    <div class="form-row">
         <label><input type="checkbox" id="node-config-input-allowStatusMsg" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Status msg</label>
         <input type="text" id="node-config-input-statusMsg">
     </div>
@@ -46,6 +58,12 @@
             firstname: {value:"", required:false},
             allowLastname: {value:true},
             lastname: {value:"", required:false},
+            allowLongitude: {value:false},
+            longitude: {value:"", required:false},
+            allowLatitude: {value:false},
+            latitude: {value:"", required:false},
+            allowLocation: {value:false},
+            location: {value:"", required:false},
             allowStatusMsg: {value:false},
             statusMsg: {value:"", required:false},
         },

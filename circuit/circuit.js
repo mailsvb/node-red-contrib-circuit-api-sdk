@@ -16,6 +16,12 @@ module.exports = (RED) => {
         node.firstname = n.firstname;
         node.allowLastname = n.allowLastname;
         node.lastname = n.lastname;
+        node.allowLongitude = n.allowLongitude;
+        node.longitude = n.longitude;
+        node.allowLatitude = n.allowLatitude;
+        node.latitude = n.latitude;
+        node.allowLocation = n.allowLocation;
+        node.location = n.location;
         node.allowStatusMsg = n.allowStatusMsg;
         node.statusMsg = n.statusMsg;
         node.connected = false;
@@ -43,14 +49,14 @@ module.exports = (RED) => {
                     node.connected = true;
                     node.user = user;
                     node.state = 'Connected'
-                    node.log('user ' + node.clientid + ' logged on at domain ' + node.domain);
+                    node.log('user ' + node.user.userId + ' logged on at domain ' + node.domain);
                     node.broadcast('state', node.state);
-                    //node.updateUser();
+                    node.updateUser();
                 })
                 .catch((err) => {
                     node.connected = false;
                     node.error(util.inspect(err, { showHidden: true, depth: null }));
-                    node.warn('Logon failed. retrying 30 seconds >' + node.clientid + '< >' + node.domain + '<');
+                    node.warn('Logon failed. retrying 30 seconds >' + node.domain + '<');
                     setTimeout(() => {
                         (node && node.logon) ? node.logon() : node.error('node.logon() does not exist. Logon failed. Aborting');
                     },30000);
@@ -58,13 +64,32 @@ module.exports = (RED) => {
             }
         };
         
-        /*
         node.updateUser = () => {
-            // set presence state to AVAILABLE
-            node.client.setPresence({state: Circuit.Constants.PresenceState.AVAILABLE})
-            .then(() => node.log('set presence state to ' + Circuit.Constants.PresenceState.AVAILABLE))
+            // subscribe to presence changes on own user id
+            node.client.subscribePresence([node.user.userId])
+            .then((states) => node.log(util.inspect(states, { showHidden: true, depth: null })))
             .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
-            // set firstname, lastname if enabled
+            
+            // set presence state
+            let presence = {};
+            presence.state='AVAILABLE';
+            if (node.allowLongitude) {
+                presence.longitude = node.longitude;
+            }
+            if (node.allowLatitude) {
+                presence.latitude = node.latitude;
+            }
+            if (node.allowLocation) {
+                presence.location = node.location;
+            }
+            if (node.allowStatusMsg) {
+                presence.status = node.status;
+            }
+            node.client.setPresence(presence)
+            .then((state) => node.log(util.inspect(state, { showHidden: true, depth: null })))
+            .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
+            
+            // set firstname, lastname
             let userObj = {};
             if (node.allowFirstname && node.firstname != node.user.firstName) {
                 userObj.firstName = node.firstname;
@@ -75,17 +100,10 @@ module.exports = (RED) => {
             if (Object.keys(userObj).length > 0) {
                 userObj.userId = node.user.userId;
                 node.client.updateUser(userObj)
-                .then(() => node.log('updated user data: ' + util.inspect(userObj, { showHidden: true, depth: null })))
-                .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
-            }
-            // set status message if enabled
-            if (node.allowStatusMsg) {
-                node.client.setStatusMessage(node.statusMsg)
-                .then(() => node.log('Status message set: ' + node.statusMsg))
+                .then((user) => node.log(util.inspect(userObj, { showHidden: true, depth: null })))
                 .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
             }
         };
-        */
         
         node.client.on('log', node.log);
         node.client.on('error', node.error);
@@ -99,6 +117,7 @@ module.exports = (RED) => {
             node.broadcast('itemRead', d);
         });
         node.client.on('presence', (d) => {
+            
             node.broadcast('presence', d);
         });
         node.client.on('activityCreated', (d) => {
@@ -139,7 +158,7 @@ module.exports = (RED) => {
         node.logon();
         
         this.on('close', () => {
-            node.log('log out ' + node.clientid + ' from domain: ' + node.domain);
+            node.log('log out from domain: ' + node.domain);
             node.client.exit();
             delete node.client;
         });
