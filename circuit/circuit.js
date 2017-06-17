@@ -31,7 +31,7 @@ module.exports = (RED) => {
         node.user = null;
         
         if (!node.client) {
-            if ((typeof node.clientid === 'undefined' || node.clientid == '') && (typeof node.clientsecret === 'undefined' || node.clientsecret == '')) {
+            if ((typeof node.clientid === 'undefined' || node.clientid === '') && (typeof node.clientsecret === 'undefined' || node.clientsecret === '')) {
                 node.log('login using username/password');
                 node.client = new CircuitAPISDK({server:node.domain,username:node.username,password:node.password});
             }
@@ -48,7 +48,7 @@ module.exports = (RED) => {
                 .then((user) => {
                     node.connected = true;
                     node.user = user;
-                    node.state = 'Connected'
+                    node.state = 'Connected';
                     node.log('user ' + node.user.userId + ' logged on at domain ' + node.domain);
                     node.broadcast('state', node.state);
                     node.updateUser();
