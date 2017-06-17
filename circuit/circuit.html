@@ -50,7 +50,15 @@
             statusMsg: {value:"", required:false},
         },
         label: function() {
-            return this.clientid.substring(0, 8) + "...@" + this.domain;
+            if (this.clientid != "") {
+                return this.clientid.substring(0, 8) + "...@" + this.domain;
+            }
+            else if (this.username != "") {
+                return this.username.substring(0, 8) + "...@" + this.domain;
+            }
+            else {
+                return "...@" + this.domain;
+            }
         }
     });
 </script>
@@ -93,7 +101,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('circuit-api-sdk-addText',{
-        category: 'Circuit',
+        category: 'CircuitAPI',
         defaults: {
             server: {value:"", type:"circuit-api-sdk-server"},
             conv: {value:""},
@@ -103,6 +111,7 @@
         inputs:1,
         outputs:1,
         icon: "circuit.png",
+        paletteLabel: "Add Text",
         label: function() {
             return this.name||this.conv||"circuit-api-sdk-addText";
         },
@@ -161,7 +170,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('circuit-api-sdk-events',{
-        category: 'Circuit',
+        category: 'CircuitAPI',
         defaults: {
             server: {value:"", type:"circuit-api-sdk-server"},
             //convEvent: {value:true},
@@ -174,6 +183,7 @@
         inputs:0,
         outputs:1,
         icon: "circuit.png",
+        paletteLabel: "Events",
         label: function() {
             return this.name||"circuit-api-sdk-events";
         },
@@ -215,7 +225,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('getConversationItems',{
-        category: 'Circuit',
+        category: 'CircuitAPI',
         defaults: {
             server: {value:"", type:"circuit-server"},
             conv: {value:""},
@@ -225,54 +235,9 @@
         inputs:1,
         outputs:1,
         icon: "circuit.png",
+        paletteLabel: "Get Conversations",
         label: function() {
             return this.name||this.conv||"getConversationItems";
-        },
-        labelStyle: function() {
-            return this.name?"node_label_italic":"";
-        }
-    });
-</script>
-
-<!-- startUserSearch
-
-<script type="text/x-red" data-template-name="startUserSearch">
-    <div class="form-row">
-        <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
-        <input type="text" id="node-input-server">
-    </div>
-    <div class="form-row">
-        <label for="node-input-search"><i class="fa fa-plus-square"></i> Search</label>
-        <input type="text" id="node-input-search" placeholder="a">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="icon-bookmark"></i> Node name</label>
-        <input type="text" id="node-input-name">
-    </div>
-</script>
-
-<script type="text/x-red" data-help-name="startUserSearch">
-    <p>Search for users on your tenant via the Circuit API</p>
-    <p>This node can either be configured with a fixed search string, or the search string can be given as string in msg.payload.</p>
-    <p>This node will provide the search results as object within msg.payload</p>
-    <p>This node combines the API calls startUserSearch and getUsersById. So the resulting object will contain the full user object as mentioned <a href="https://circuitsandbox.net/sdk/classes/User.html" target="_blank">here</a></p>
-    <p>You can check details about startUserSearch and getUsersById on <a href="https://circuitsandbox.net/sdk/classes/Client.html" target="_blank">https://circuitsandbox.net/sdk</a></p>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('startUserSearch',{
-        category: 'Circuit',
-        defaults: {
-            server: {value:"", type:"circuit-server"},
-            search: {value:""},
-            name: {value:"",required:false},
-        },
-        color: "#88C540",
-        inputs:1,
-        outputs:1,
-        icon: "circuit.png",
-        label: function() {
-            return this.name||this.conv||"startUserSearch";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
