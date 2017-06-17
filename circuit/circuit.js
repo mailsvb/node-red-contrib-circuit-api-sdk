@@ -7,6 +7,7 @@ module.exports = (RED) => {
     function CircuitApiSdkServerNode(n) {
         RED.nodes.createNode(this,n);
         let node = this;
+        node.client = false;
         node.domain = n.domain;
         node.clientid = n.clientid;
         node.clientsecret = n.clientsecret;
@@ -28,7 +29,6 @@ module.exports = (RED) => {
         node.state = "Disconnected";
         node.reconnectCount = 0;
         node.subscriptions = {};
-        node.user = null;
         
         if (!node.client) {
             if ((typeof node.clientid === 'undefined' || node.clientid === '') && (typeof node.clientsecret === 'undefined' || node.clientsecret === '')) {
@@ -47,9 +47,11 @@ module.exports = (RED) => {
                 node.client.login()
                 .then((user) => {
                     node.connected = true;
-                    node.user = user;
+                    node.userId = user.userId;
+                    node.userFirstName = user.firstName;
+                    node.userLastName = user.lastName;
                     node.state = 'Connected';
-                    node.log('user ' + node.user.userId + ' logged on at domain ' + node.domain);
+                    node.log('user ' + node.userFirstName + ' ' + node.userLastName + ' logged on at domain ' + node.domain);
                     node.broadcast('state', node.state);
                     node.updateUser();
                 })
@@ -66,8 +68,7 @@ module.exports = (RED) => {
         
         node.updateUser = () => {
             // subscribe to presence changes on own user id
-            node.client.subscribePresence([node.user.userId])
-            .then((states) => node.log(util.inspect(states, { showHidden: true, depth: null })))
+            node.client.subscribePresence([node.userId])
             .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
             
             // set presence state
@@ -86,28 +87,26 @@ module.exports = (RED) => {
                 presence.status = node.status;
             }
             node.client.setPresence(presence)
-            .then((state) => node.log(util.inspect(state, { showHidden: true, depth: null })))
             .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
             
             // set firstname, lastname
             let userObj = {};
-            if (node.allowFirstname && node.firstname != node.user.firstName) {
+            if (node.allowFirstname && node.firstname != node.userFirstName) {
                 userObj.firstName = node.firstname;
             }
-            if (node.allowLastname && node.lastname != node.user.lastName) {
+            if (node.allowLastname && node.lastname != node.userLastName) {
                 userObj.lastName = node.lastname;
             }
             if (Object.keys(userObj).length > 0) {
-                userObj.userId = node.user.userId;
+                userObj.userId = node.userId;
                 node.client.updateUser(userObj)
-                .then((user) => node.log(util.inspect(userObj, { showHidden: true, depth: null })))
                 .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
             }
         };
         
         node.client.on('log', node.log);
         node.client.on('error', node.error);
-        node.client.on('reconnection', node.updateUser());
+        node.client.on('reconnection', () => node.updateUser());
         node.client.on('itemAdded', (d) => {
             node.broadcast('itemAdded', d);
         });
@@ -118,7 +117,7 @@ module.exports = (RED) => {
             node.broadcast('itemRead', d);
         });
         node.client.on('presence', (d) => {
-            if (d.newState.userId == node.user.userId) {
+            if (d.newState.userId == node.userId) {
                 node.updateUser();
             }
             node.broadcast('presence', d);
@@ -149,7 +148,7 @@ module.exports = (RED) => {
         };
         // broadcast events to subscribed nodes
         node.broadcast = (type, data) => {
-            node.log('broadcasting to all >' + type + '< listeners:\n' + util.inspect(data, { showHidden: true, depth: null }));
+            node.log('broadcasting ' + data.length + ' to all >' + type + '< listeners');
             for (var s in node.subscriptions) {
                 if (node.subscriptions[s].hasOwnProperty(type)) {
                     node.log('listener for >' + type + '< at node >' + s + '<');
@@ -164,6 +163,7 @@ module.exports = (RED) => {
             node.log('log out from domain: ' + node.domain);
             node.client.exit();
             delete node.client;
+            node.client = false;
         });
     }
     RED.nodes.registerType("circuit-api-sdk-server",CircuitApiSdkServerNode);
