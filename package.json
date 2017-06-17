@@ -1,0 +1,14 @@
+{
+    "author": {
+        "name": "Sven, mailsvb@gmail.com"
+    },
+    "description": "node-red circuit-api-sdk extension",
+    "name": "node-red-contrib-circuit-api-sdk",
+    "keywords": [ "node-red", "circuit", "yourcircuit", "api", "sdk" ],
+    "node-red": {
+        "nodes": {
+            "circuit": "circuit/circuit.js"
+        }
+    },
+    "version": "1.0.0"
+}
