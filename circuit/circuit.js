@@ -107,6 +107,7 @@ module.exports = (RED) => {
         
         node.client.on('log', node.log);
         node.client.on('error', node.error);
+        node.client.on('reconnection', node.updateUser());
         node.client.on('itemAdded', (d) => {
             node.broadcast('itemAdded', d);
         });
@@ -117,7 +118,9 @@ module.exports = (RED) => {
             node.broadcast('itemRead', d);
         });
         node.client.on('presence', (d) => {
-            
+            if (d.newState.userId == node.user.userId) {
+                node.updateUser();
+            }
             node.broadcast('presence', d);
         });
         node.client.on('activityCreated', (d) => {
