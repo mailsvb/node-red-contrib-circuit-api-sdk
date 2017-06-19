@@ -46,22 +46,19 @@ module.exports = (RED) => {
             if (node.connected === false) {
                 node.client.login()
                 .then((user) => {
-                    node.connected = true;
                     node.userId = user.userId;
                     node.userFirstName = user.firstName;
                     node.userLastName = user.lastName;
-                    node.state = 'Connected';
                     node.log('user ' + node.userFirstName + ' ' + node.userLastName + ' logged on at domain ' + node.domain);
-                    node.broadcast('state', node.state);
-                    node.updateUser();
+                    node.stateHandler(true);
                 })
                 .catch((err) => {
-                    node.connected = false;
                     node.error(util.inspect(err, { showHidden: true, depth: null }));
                     node.warn('Logon failed. retrying 30 seconds >' + node.domain + '<');
                     setTimeout(() => {
                         (node && node.logon) ? node.logon() : node.error('node.logon() does not exist. Logon failed. Aborting');
                     },30000);
+                    node.stateHandler(false);
                 });
             }
         };
@@ -104,9 +101,21 @@ module.exports = (RED) => {
             }
         };
         
+        node.stateHandler = (con) => {
+            node.connected = con;
+            if (node.connected) {
+                node.state = 'Connected';
+                node.updateUser();
+            } else {
+                node.state = 'Disconnected';
+            }
+            node.broadcast('state', node.state);
+        };
+        
         node.client.on('log', node.log);
         node.client.on('error', node.error);
-        node.client.on('reconnection', () => node.updateUser());
+        node.client.on('reconnection', () => node.stateHandler(true));
+        node.client.on('disconnection', () => node.stateHandler(false));
         node.client.on('itemAdded', (d) => {
             node.broadcast('itemAdded', d);
         });
