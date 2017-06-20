@@ -13,18 +13,14 @@ module.exports = (RED) => {
         node.clientsecret = n.clientsecret;
         node.username = n.username;
         node.password = n.password;
-        node.allowFirstname = n.allowFirstname;
-        node.firstname = n.firstname;
-        node.allowLastname = n.allowLastname;
-        node.lastname = n.lastname;
-        node.allowLongitude = n.allowLongitude;
-        node.longitude = n.longitude;
-        node.allowLatitude = n.allowLatitude;
-        node.latitude = n.latitude;
-        node.allowLocation = n.allowLocation;
-        node.location = n.location;
-        node.allowStatusMsg = n.allowStatusMsg;
-        node.statusMsg = n.statusMsg;
+        node.setName = n.setName || false;
+        node.firstname = n.firstname || '';
+        node.lastname = n.lastname || '';
+        node.setPresence = n.setPresence || false;
+        node.longitude = n.longitude || '';
+        node.latitude = n.latitude || '';
+        node.location = n.location || '';
+        node.status = n.status || '';
         node.connected = false;
         node.state = "Disconnected";
         node.reconnectCount = 0;
@@ -64,40 +60,45 @@ module.exports = (RED) => {
         };
         
         node.updateUser = () => {
-            // subscribe to presence changes on own user id
-            node.client.subscribePresence([node.userId])
-            .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
-            
-            // set presence state
-            let presence = {};
-            presence.state='AVAILABLE';
-            if (node.allowLongitude) {
-                presence.longitude = node.longitude;
+            if (node.setPresence) {
+                // subscribe to presence changes on own user id
+                node.client.subscribePresence([node.userId])
+                .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
+                
+                // set presence state
+                let presence = {};
+                presence.state='AVAILABLE';
+                if (node.longitude != '') {
+                    presence.longitude = node.longitude;
+                }
+                if (node.latitude != '') {
+                    presence.latitude = node.latitude;
+                }
+                if (node.location != '') {
+                    presence.location = node.location;
+                }
+                if (node.status != '') {
+                    presence.status = node.status;
+                }
+                
+                node.client.setPresence(presence)
+                .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
             }
-            if (node.allowLatitude) {
-                presence.latitude = node.latitude;
-            }
-            if (node.allowLocation) {
-                presence.location = node.location;
-            }
-            if (node.allowStatusMsg) {
-                presence.status = node.status;
-            }
-            node.client.setPresence(presence)
-            .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
             
             // set firstname, lastname
-            let userObj = {};
-            if (node.allowFirstname && node.firstname != node.userFirstName) {
-                userObj.firstName = node.firstname;
-            }
-            if (node.allowLastname && node.lastname != node.userLastName) {
-                userObj.lastName = node.lastname;
-            }
-            if (Object.keys(userObj).length > 0) {
-                userObj.userId = node.userId;
-                node.client.updateUser(userObj)
-                .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
+            if (node.setName) {
+                let userObj = {};
+                if (node.firstname != node.userFirstName) {
+                    userObj.firstName = node.firstname;
+                }
+                if (node.lastname != node.userLastName) {
+                    userObj.lastName = node.lastname;
+                }
+                if (Object.keys(userObj).length > 0) {
+                    userObj.userId = node.userId;
+                    node.client.updateUser(userObj)
+                    .catch((err) => node.error(util.inspect(err, { showHidden: true, depth: null })));
+                }
             }
         };
         

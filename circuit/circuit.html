@@ -20,28 +20,36 @@
         <input type="password" id="node-config-input-password">
     </div>
     <div class="form-row">
-        <label><input type="checkbox" id="node-config-input-allowFirstname" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Firstname</label>
+        <label><input type="checkbox" id="node-config-input-setName" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Name?</label>
+        <label style="width: 70%; cursor: none;">set name of user</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;Firstname</label>
         <input type="text" id="node-config-input-firstname">
     </div>
     <div class="form-row">
-        <label><input type="checkbox" id="node-config-input-allowLastname" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Lastname</label>
+        <label>&nbsp;Lastname</label>
         <input type="text" id="node-config-input-lastname">
     </div>
     <div class="form-row">
-        <label><input type="checkbox" id="node-config-input-allowLongitude" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Longitude</label>
+        <label><input type="checkbox" id="node-config-input-setPresence" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Presence?</label>
+        <label style="width: 70%; cursor: none;">set presence and/or status of user</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;Longitude</label>
         <input type="text" id="node-config-input-longitude">
     </div>
     <div class="form-row">
-        <label><input type="checkbox" id="node-config-input-allowLatitude" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Latitude</label>
+        <label>&nbsp;Latitude</label>
         <input type="text" id="node-config-input-latitude">
     </div>
     <div class="form-row">
-        <label><input type="checkbox" id="node-config-input-allowLocation" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Location</label>
+        <label>&nbsp;Location</label>
         <input type="text" id="node-config-input-location">
     </div>
     <div class="form-row">
-        <label><input type="checkbox" id="node-config-input-allowStatusMsg" style="display: inline-block; width: auto; vertical-align: top;">&nbsp;Status msg</label>
-        <input type="text" id="node-config-input-statusMsg">
+        <label>&nbsp;Status msg</label>
+        <input type="text" id="node-config-input-status">
     </div>
 </script>
 
@@ -54,18 +62,14 @@
             clientsecret: {value:"", required:false},
             username: {value:"", required:false},
             password: {value:"", required:false},
-            allowFirstname: {value:true},
+            setName: {value:false},
             firstname: {value:"", required:false},
-            allowLastname: {value:true},
             lastname: {value:"", required:false},
-            allowLongitude: {value:false},
+            setPresence: {value:false},
             longitude: {value:"", required:false},
-            allowLatitude: {value:false},
             latitude: {value:"", required:false},
-            allowLocation: {value:false},
             location: {value:"", required:false},
-            allowStatusMsg: {value:false},
-            statusMsg: {value:"", required:false},
+            status: {value:"", required:false},
         },
         label: function() {
             if (this.clientid != "") {
