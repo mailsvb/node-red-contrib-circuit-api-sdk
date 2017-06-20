@@ -292,10 +292,9 @@ module.exports = (RED) => {
     
     /*
     //getConversationItems 
-    function getConversationItems(n) {
+    function CircuitApiSdkGetConvItems(n) {
         RED.nodes.createNode(this,n);
         let node = this;
-        node.conv = n.conv || "";
         node.server = RED.nodes.getNode(n.server);
         
         node.server.subscribe(node.id, 'state', (state) => {
@@ -326,6 +325,6 @@ module.exports = (RED) => {
             node.send({ payload: {state: 'stopping'} });
         });
     }
-    RED.nodes.registerType("getConversationItems",getConversationItems);
+    RED.nodes.registerType("circuit-api-sdk-get-conv-items",CircuitApiSdkGetConvItems);
     */
 };
