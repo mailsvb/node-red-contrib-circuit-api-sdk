@@ -211,6 +211,46 @@
     });
 </script>
 
+<!-- circuit-api-sdk-get-conv-by-id --> 
+
+<script type="text/x-red" data-template-name="circuit-api-sdk-get-conv-by-id">
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-server"></i> Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-bookmark"></i> Node name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="circuit-api-sdk-get-conv-by-id">
+    <p>Get a conversation by ID via the Circuit API</p>
+    <p>This node takes msg.payload as string. msg.payload should hold the conversation ID</p>
+    <p>The output will be available as object within msg.payload</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('circuit-api-sdk-get-conv-by-id',{
+        category: 'CircuitAPI',
+        defaults: {
+            server: {value:"", type:"circuit-api-sdk-server"},
+            name: {value:"",required:false},
+        },
+        color: "#88C540",
+        inputs:1,
+        outputs:1,
+        icon: "circuit.png",
+        paletteLabel: "Get Conv by ID",
+        label: function() {
+            return this.name||"get conv by ID";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
 <!-- getConversationItems
 
 <script type="text/x-red" data-template-name="getConversationItems">
