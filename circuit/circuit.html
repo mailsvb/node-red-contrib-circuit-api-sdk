@@ -156,10 +156,21 @@
         <label for="node-input-convEvent" style="width: 70%;"> Conversation events</label>
     </div>-->
     <div class="form-row">
-        <label>Subscribe?</label>
-        <input type="checkbox" id="node-input-itemEvent" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-itemEvent" style="width: 70%;"> Item events</label>
+        <label style="width: 80%; cursor: none;">Subscribe to item events</label>
     </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-itemAddedEvent" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-itemAddedEvent" style="width: 70%;"> Item added events</label>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-itemUpdatedEvent" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-itemUpdatedEvent" style="width: 70%;"> Item updated events</label>
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-itemReadEvent" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-itemReadEvent" style="width: 70%;"> Item read events</label>
+    </div>
+    
     <div class="form-row">
         <label>Subscribe?</label>
         <input type="checkbox" id="node-input-presenceEvent" style="display: inline-block; width: auto; vertical-align: top;">
@@ -196,7 +207,9 @@
         defaults: {
             server: {value:"", type:"circuit-api-sdk-server"},
             //convEvent: {value:true},
-            itemEvent: {value:true},
+            itemAddedEvent: {value:true},
+            itemUpdatedEvent: {value:true},
+            itemReadEvent: {value:true},
             presenceEvent: {value:true},
             activityEvent: {value:true},
             name: {value:"",required:false},

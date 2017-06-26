@@ -220,8 +220,10 @@ module.exports = (RED) => {
         RED.nodes.createNode(this,n);
         let node = this;
         node.server = RED.nodes.getNode(n.server);
-        //node.convEvent     = n.convEvent;
-        node.itemEvent     = n.itemEvent;
+        //node.convEvent        = n.convEvent;
+        node.itemAddedEvent   = n.itemAddedEvent;
+        node.itemUpdatedEvent = n.itemUpdatedEvent;
+        node.itemReadEvent    = n.itemReadEvent;
         node.presenceEvent = n.presenceEvent;
         node.activityEvent = n.activityEvent;
         
@@ -235,9 +237,13 @@ module.exports = (RED) => {
             node.server.subscribe(node.id, 'conversationCreated', (evt) => { node.send({ payload: evt }); });
         }
         */
-        if (node.itemEvent) {
+        if (node.itemAddedEvent) {
             node.server.subscribe(node.id, 'itemAdded',       (evt) => { node.send({ payload: evt }); });
+        }
+        if (node.itemUpdatedEvent) {
             node.server.subscribe(node.id, 'itemUpdated',     (evt) => { node.send({ payload: evt }); });
+        }
+        if (node.itemReadEvent) {
             node.server.subscribe(node.id, 'itemRead',        (evt) => { node.send({ payload: evt }); });
         }
         if (node.presenceEvent) {
